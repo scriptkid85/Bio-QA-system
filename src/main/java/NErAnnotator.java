@@ -5,13 +5,10 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.jcas.JCas;
-import org.apache.uima.resource.ResourceInitializationException;
-
 import com.aliasi.chunk.Chunk;
 import com.aliasi.chunk.Chunker;
 import com.aliasi.chunk.Chunking;
@@ -21,13 +18,9 @@ import com.aliasi.util.AbstractExternalizable;
  * Example annotator that detects room numbers using Java 1.4 regular expressions.
  */
 public class NErAnnotator extends JCasAnnotator_ImplBase {
-  private PosTagNamedEntityRecognizer mPosTagNER;
-
   private File modelFile = new File("src/main/resources/Lingpipe/ne-en-bio-genetag.HmmChunker");
 
   private Chunker chunker;
-
-  private Map<Integer, Integer> begin2end;
 
   /**
    * @see JCasAnnotator_ImplBase#process(JCas)
@@ -58,15 +51,31 @@ public class NErAnnotator extends JCasAnnotator_ImplBase {
       Chunking chunking = chunker.chunk(linewoindex);
       Set<Chunk> chunkresult = chunking.chunkSet();
       Iterator<Chunk> it = chunkresult.iterator();
+
+      // count the number of " ".
+      int parsepos, beforestart, beforeend;
+      parsepos = beforestart = beforeend = 0;
       while (it.hasNext()) {
         chunk = it.next();
         GenTag annotation = new GenTag(aJCas);
         annotation.setLineindex(lineindex);
-        annotation.setBegin(chunk.start());
-        annotation.setEnd(chunk.end());
-        word = linewoindex.substring(annotation.getBegin(), annotation.getEnd());
+
+        for (int i = parsepos; i < chunk.start(); i++)
+          if (linewoindex.charAt(i) == ' ')
+            beforestart++;
+        for (int i = chunk.start(); i < chunk.end(); i++)
+          if (linewoindex.charAt(i) == ' ')
+            beforeend++;
+        parsepos = chunk.end();
+        
+        word = linewoindex.substring(chunk.start(), chunk.end());
+        annotation.setBegin(chunk.start() - beforestart);
+        annotation.setEnd(chunk.end() - beforestart - beforeend - 1);
         annotation.setMSofa(word);
         annotation.addToIndexes();
+        
+        beforestart = beforestart + beforeend;
+        beforeend = 0;
       }
     }
   }

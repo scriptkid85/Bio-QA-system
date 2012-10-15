@@ -1,10 +1,8 @@
 /*
  *
  */
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.uima.cas.CAS;
@@ -12,10 +10,10 @@ import org.apache.uima.cas.CASException;
 import org.apache.uima.collection.CasConsumer_ImplBase;
 import org.apache.uima.collection.base_cpm.CasObjectProcessor;
 import org.apache.uima.jcas.JCas;
-import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceConfigurationException;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.ResourceProcessException;
+import org.apache.uima.util.FileUtils;
 import org.apache.uima.util.ProcessTrace;
 
 /**
@@ -33,9 +31,15 @@ import org.apache.uima.util.ProcessTrace;
  */
 
 public class mEvaluator extends CasConsumer_ImplBase implements CasObjectProcessor {
+  long hitnumber, sampleoutnumber, annotnumber;
+
   File outFile;
 
+  File inputfile;
+
   FileWriter fileWriter;
+
+  HashSet<String> HSet;
 
   public mEvaluator() {
   }
@@ -47,7 +51,26 @@ public class mEvaluator extends CasConsumer_ImplBase implements CasObjectProcess
    *           if there is error in initializing the resources
    */
   public void initialize() throws ResourceInitializationException {
+    HSet = new HashSet<String>();
+    hitnumber = sampleoutnumber = annotnumber = 0;
 
+    try {
+      FileReader fr = new FileReader("src/main/resources/data/sample.out");// 创建FileReader对象，用来读取字符流
+      BufferedReader br = new BufferedReader(fr); // 缓冲指定文件的输入
+      String myreadline; // 定义一个String类型的变量,用来每次读取一行
+      while (br.ready()) {
+        myreadline = br.readLine();// 读取一行
+        HSet.add(myreadline);
+        sampleoutnumber++;
+      }
+      br.close();
+      br.close();
+      fr.close();
+
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     // extract configuration parameter settings
     String oPath = (String) getUimaContext().getConfigParameterValue("outputFile");
 
@@ -94,20 +117,32 @@ public class mEvaluator extends CasConsumer_ImplBase implements CasObjectProcess
 
     // iterate and print annotations
     Iterator annotationIter = jcas.getAnnotationIndex(GenTag.type).iterator();
+    String record;
     while (annotationIter.hasNext()) {
+      annotnumber++;
       GenTag annot = (GenTag) annotationIter.next();
       // get the text that is enclosed within the annotation in the CAS
       // String aText = annot.getLineindex();
       // aText = aText.replace('\n', ' ');
       // aText = aText.replace('\r', ' ');
       // System.out.println( annot.getType().getName() + " "+aText);
-      try {
-        fileWriter.write(annot.getLineindex() + "|" + annot.getBegin() + " " + annot.getEnd() + "|"
-                + annot.getMSofa() + "\n");
-        fileWriter.flush();
-      } catch (IOException e) {
-        throw new ResourceProcessException(e);
+      record = new String(annot.getLineindex() + "|" + annot.getBegin() + " " + annot.getEnd()
+              + "|" + annot.getMSofa());
+      if (HSet.contains(record)) {
+        hitnumber++;
       }
+
+    }
+    
+    float precision = hitnumber/(float)annotnumber;
+    float recall = hitnumber/(float)sampleoutnumber;
+    try {
+      fileWriter.write("hitcount: " + hitnumber + "; sampleoutcount: " + sampleoutnumber
+              + "; annotationcount: " + annotnumber + ";\n" + "Precison: " + precision + "; Recall: " 
+              + recall + "\n");
+      fileWriter.flush();
+    } catch (IOException e) {
+      throw new ResourceProcessException(e);
     }
   }
 
