@@ -2,14 +2,20 @@
  *
  */
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 import org.apache.uima.analysis_component.JCasAnnotator_ImplBase;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
+
+import com.aliasi.chunk.Chunk;
+import com.aliasi.chunk.Chunker;
+import com.aliasi.chunk.Chunking;
+import com.aliasi.util.AbstractExternalizable;
 
 /**
  * Example annotator that detects room numbers using Java 1.4 regular expressions.
@@ -17,7 +23,11 @@ import org.apache.uima.resource.ResourceInitializationException;
 public class NErAnnotator extends JCasAnnotator_ImplBase {
   private PosTagNamedEntityRecognizer mPosTagNER;
 
-  Map<Integer, Integer> begin2end;
+  private File modelFile = new File("src/main/resources/Lingpipe/ne-en-bio-genetag.HmmChunker");
+
+  private Chunker chunker;
+
+  private Map<Integer, Integer> begin2end;
 
   /**
    * @see JCasAnnotator_ImplBase#process(JCas)
@@ -30,10 +40,12 @@ public class NErAnnotator extends JCasAnnotator_ImplBase {
     String lineindex;
     String linewoindex;
     int firstblank;
-
+    Chunk chunk;
     try {
-      mPosTagNER = new PosTagNamedEntityRecognizer();
-    } catch (ResourceInitializationException e) {
+      chunker = (Chunker) AbstractExternalizable.readObject(modelFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
 
@@ -43,19 +55,18 @@ public class NErAnnotator extends JCasAnnotator_ImplBase {
       lineindex = s.substring(0, firstblank);
       linewoindex = s.substring(firstblank + 1, s.length());
 
-      begin2end = mPosTagNER.getGeneSpans(linewoindex);
-      Iterator it = begin2end.entrySet().iterator();
+      Chunking chunking = chunker.chunk(linewoindex);
+      Set<Chunk> chunkresult = chunking.chunkSet();
+      Iterator<Chunk> it = chunkresult.iterator();
       while (it.hasNext()) {
-        Map.Entry pairs = (Map.Entry) it.next();
-        // System.out.println(pairs.getKey() + " <-> " + pairs.getValue());
+        chunk = it.next();
         GenTag annotation = new GenTag(aJCas);
         annotation.setLineindex(lineindex);
-        annotation.setBegin((Integer) pairs.getKey());
-        annotation.setEnd((Integer) pairs.getValue());
+        annotation.setBegin(chunk.start());
+        annotation.setEnd(chunk.end());
         word = linewoindex.substring(annotation.getBegin(), annotation.getEnd());
         annotation.setMSofa(word);
         annotation.addToIndexes();
-        it.remove(); // avoids a ConcurrentModificationException
       }
     }
   }
