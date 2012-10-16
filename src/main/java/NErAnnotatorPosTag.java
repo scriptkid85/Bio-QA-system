@@ -14,6 +14,8 @@ import org.apache.uima.resource.ResourceInitializationException;
 public class NErAnnotatorPosTag extends JCasAnnotator_ImplBase {
   private PosTagNamedEntityRecognizer mPosTagNER;
 
+  private GeneRuler mRuler;
+
   Map<Integer, Integer> begin2end;
 
   /**
@@ -27,6 +29,7 @@ public class NErAnnotatorPosTag extends JCasAnnotator_ImplBase {
     String lineindex;
     String linewoindex;
     int firstblank;
+    mRuler = new GeneRuler();
 
     try {
       mPosTagNER = new PosTagNamedEntityRecognizer();
@@ -43,28 +46,30 @@ public class NErAnnotatorPosTag extends JCasAnnotator_ImplBase {
       begin2end = mPosTagNER.getGeneSpans(linewoindex);
       Iterator it = begin2end.entrySet().iterator();
 
-
       while (it.hasNext()) {
         Map.Entry pairs = (Map.Entry) it.next();
         // System.out.println(pairs.getKey() + " <-> " + pairs.getValue());
-        GenTag annotation = new GenTag(aJCas);
-        annotation.setLineindex(lineindex);
-        
-        // count the number of " ".
-        int beforestart, beforeend;
-        beforestart = beforeend = 0;
-        for (int i = 0; i < (Integer) pairs.getKey(); i++)
-          if (linewoindex.charAt(i) == ' ')
-            beforestart++;
-        for (int i = (Integer) pairs.getKey(); i < (Integer) pairs.getValue(); i++)
-          if (linewoindex.charAt(i) == ' ')
-            beforeend++;
-        
         word = linewoindex.substring((Integer) pairs.getKey(), (Integer) pairs.getValue());
-        annotation.setBegin((Integer) pairs.getKey() - beforestart);
-        annotation.setEnd((Integer) pairs.getValue() - beforestart - beforeend - 1);
-        annotation.setMSofa(word);
-        annotation.addToIndexes();
+        
+        if (mRuler.GeneTest(word)) {
+          GenTag annotation = new GenTag(aJCas);
+          annotation.setLineindex(lineindex);
+
+          // count the number of " ".
+          int beforestart, beforeend;
+          beforestart = beforeend = 0;
+          for (int i = 0; i < (Integer) pairs.getKey(); i++)
+            if (linewoindex.charAt(i) == ' ')
+              beforestart++;
+          for (int i = (Integer) pairs.getKey(); i < (Integer) pairs.getValue(); i++)
+            if (linewoindex.charAt(i) == ' ')
+              beforeend++;
+
+          annotation.setBegin((Integer) pairs.getKey() - beforestart);
+          annotation.setEnd((Integer) pairs.getValue() - beforestart - beforeend - 1);
+          annotation.setMSofa(word);
+          annotation.addToIndexes();
+        }
       }
     }
   }

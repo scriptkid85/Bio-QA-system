@@ -2,10 +2,10 @@
 <analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
   <primitive>true</primitive>
-  <annotatorImplementationName>NErAnnotator</annotatorImplementationName>
+  <annotatorImplementationName>NErAnnotatorLingPipe</annotatorImplementationName>
   <analysisEngineMetaData>
-    <name>NErAnnotator</name>
-    <description>hw1 - NER Annotator combining PosTag + Rules + LingPipe</description>
+    <name>NErAnnotatorLingPipe</name>
+    <description>hw1 - NER Annotator with LingPipe NER</description>
     <version>1.0</version>
     <vendor>guanyuw</vendor>
     <configurationParameters/>

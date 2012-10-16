@@ -109,6 +109,9 @@ public class mEvaluator extends CasConsumer_ImplBase implements CasObjectProcess
    */
   public synchronized void processCas(CAS aCAS) throws ResourceProcessException {
     JCas jcas;
+    String prerecord = " ";
+    String newrecord = " ";
+    
     try {
       jcas = aCAS.getJCas();
     } catch (CASException e) {
@@ -117,21 +120,25 @@ public class mEvaluator extends CasConsumer_ImplBase implements CasObjectProcess
 
     // iterate and print annotations
     Iterator annotationIter = jcas.getAnnotationIndex(GenTag.type).iterator();
-    String record;
+
     while (annotationIter.hasNext()) {
-      annotnumber++;
+      
       GenTag annot = (GenTag) annotationIter.next();
+      newrecord = new String(annot.getLineindex() + "|" + annot.getBegin() + " " + annot.getEnd()
+              + "|" + annot.getMSofa());
+      
       // get the text that is enclosed within the annotation in the CAS
       // String aText = annot.getLineindex();
       // aText = aText.replace('\n', ' ');
       // aText = aText.replace('\r', ' ');
       // System.out.println( annot.getType().getName() + " "+aText);
-      record = new String(annot.getLineindex() + "|" + annot.getBegin() + " " + annot.getEnd()
-              + "|" + annot.getMSofa());
-      if (HSet.contains(record)) {
-        hitnumber++;
+      if(!prerecord.equals(newrecord)){
+        annotnumber++;
+        if (HSet.contains(newrecord)) {
+          hitnumber++;
+        }
+        prerecord = newrecord;
       }
-
     }
     
     float precision = hitnumber/(float)annotnumber;

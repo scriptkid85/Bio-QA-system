@@ -85,6 +85,9 @@ public class GenPrinter extends CasConsumer_ImplBase implements CasObjectProcess
    */
   public synchronized void processCas(CAS aCAS) throws ResourceProcessException {
     JCas jcas;
+    String preoutput = " ";
+    String newoutput = " ";
+
     try {
       jcas = aCAS.getJCas();
     } catch (CASException e) {
@@ -95,17 +98,24 @@ public class GenPrinter extends CasConsumer_ImplBase implements CasObjectProcess
     Iterator annotationIter = jcas.getAnnotationIndex(GenTag.type).iterator();
     while (annotationIter.hasNext()) {
       GenTag annot = (GenTag) annotationIter.next();
+
       // get the text that is enclosed within the annotation in the CAS
       // String aText = annot.getLineindex();
       // aText = aText.replace('\n', ' ');
       // aText = aText.replace('\r', ' ');
       // System.out.println( annot.getType().getName() + " "+aText);
-      try {
-        fileWriter.write(annot.getLineindex() + "|" + annot.getBegin() + " " + annot.getEnd() + "|"
-                + annot.getMSofa() + "\n");
-        fileWriter.flush();
-      } catch (IOException e) {
-        throw new ResourceProcessException(e);
+
+      newoutput = annot.getLineindex() + "|" + annot.getBegin() + " " + annot.getEnd() + "|"
+              + annot.getMSofa() + "\n";
+      // Do not output duplicate CAS
+      if (!preoutput.equals(newoutput)) {
+        try {
+          fileWriter.write(newoutput);
+          fileWriter.flush();
+        } catch (IOException e) {
+          throw new ResourceProcessException(e);
+        }
+        preoutput = newoutput;
       }
     }
   }

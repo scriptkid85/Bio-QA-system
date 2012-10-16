@@ -1,0 +1,11 @@
+hitcount: 15769; sampleoutcount: 18265; annotationcount: 31081;
+Precison: 0.50735176; Recall: 0.8633452
+
+100% (35331ms) - Collection Processing Engine
+0.18% (63ms) - CollectionReader (Process)
+99.06% (35000ms) - NErAnnotator (Analysis)
+0% (1ms) - NErAnnotator (End of Batch)
+0.63% (222ms) - GenPrinter (Analysis)
+0% (0ms) - GenPrinter (End of Batch)
+0.13% (45ms) - mEvaluator (Analysis)
+0% (0ms) - mEvaluator (End of Batch)
