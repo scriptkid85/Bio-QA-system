@@ -1,5 +1,6 @@
 /*
- *
+ *  Wittren by Guanyu Wang, andrew ID: guanyuw
+ *  For homework 1 of 11791
  */
 
 import java.io.File;
@@ -15,8 +16,9 @@ import com.aliasi.chunk.Chunking;
 import com.aliasi.util.AbstractExternalizable;
 
 /**
- * Example annotator that detects room numbers using Java 1.4 regular expressions.
+ * The Name Entity Recognizer. It use the Lingpipe tool kit to do the tagging task. 
  */
+
 public class NErAnnotatorLingPipe extends JCasAnnotator_ImplBase {
   private File modelFile = new File("src/main/resources/Lingpipe/ne-en-bio-genetag.HmmChunker");
 
@@ -68,6 +70,7 @@ public class NErAnnotatorLingPipe extends JCasAnnotator_ImplBase {
             beforeend++;
         parsepos = chunk.end();
         
+        //compute the start and end value
         word = linewoindex.substring(chunk.start(), chunk.end());
         annotation.setBegin(chunk.start() - beforestart);
         annotation.setEnd(chunk.end() - beforestart - beforeend - 1);

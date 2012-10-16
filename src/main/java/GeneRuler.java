@@ -1,5 +1,11 @@
+/**
+ * The GeneRulerClass, which judge the given text is a gene mention or not. Wittren by Guanyu Wang,
+ * andrew ID: guanyuw For homework 1 of 11791
+ */
+
 public class GeneRuler {
 
+  // define the Default strings which are used to determine gene m
   private String Matchstring[] = { "mutant", "domain", "element", "enhancer", "fusion", "chain",
       "monomer", "codon", "region", "exon", "orf", "cdna", "reporter", "gene", "antibody",
       "complex", "mrna", "oligomer", "chemokine", "subunit", "peptide", "message",
@@ -22,11 +28,18 @@ public class GeneRuler {
       "Pancreozymin", "Cholecystokinin", "Parathyrinl", "Parathormone", "Proangiotensin",
       "Relaxin", "Secretin", "Somatomedinm", "Thymopoietinn", "Thymin" };
 
+  // the string which can not be appeared at the end of any gene mention.
   private String notAllow[] = { "mutations", ")" };
 
   public GeneRuler() {
   }
 
+  /**
+   * Output true if the given text satisfies the rules for gene mention.
+   * 
+   * @param text
+   *          the given text which is ready to judge
+   */
   public boolean GeneMatch(String text) {
 
     int i;
@@ -47,6 +60,12 @@ public class GeneRuler {
     return false;
   }
 
+  /**
+   * Output true if the given text do not satisfies the counter-rules for gene mention.
+   * 
+   * @param text
+   *          the given text which is ready to judge
+   */
   public boolean GeneNotMatch(String text) {
     int i;
     for (i = 0; i < notAllow.length; i++) {
@@ -55,6 +74,13 @@ public class GeneRuler {
     }
     return true;
   }
+
+  /**
+   * Output true if the given text is a gene mention based on the rules.
+   * 
+   * @param text
+   *          the given text which is ready to judge
+   */
 
   public boolean GeneTest(String text) {
     return (GeneMatch(text) && GeneNotMatch(text));

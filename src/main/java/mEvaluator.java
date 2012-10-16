@@ -1,6 +1,8 @@
 /*
- *
+ *  Wittren by Guanyu Wang, andrew ID: guanyuw
+ *  For homework 1 of 11791
  */
+
 import java.io.*;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,20 +19,15 @@ import org.apache.uima.util.FileUtils;
 import org.apache.uima.util.ProcessTrace;
 
 /**
- * An example of CAS Consumer. <br>
- * AnnotationPrinter prints to an output file all annotations in the CAS. <br>
- * Parameters needed by the AnnotationPrinter are
- * <ol>
- * <li>"outputFile" : file to which the output files should be written.</li>
- * </ol>
- * <br>
- * These parameters are set in the initialize method to the values specified in the descriptor file. <br>
- * These may also be set by the application by using the setConfigParameterValue methods.
+ * The Evaluator Class, which count the hitnumber of the output from the NERs. At the same time, if there are
+ * CASs which have exactly the same content, then discard the duplicate.
  * 
- * 
+ * @param outputFile
+ *          file to which the evaluation files should be written.
  */
 
 public class mEvaluator extends CasConsumer_ImplBase implements CasObjectProcessor {
+  
   long hitnumber, sampleoutnumber, annotnumber;
 
   File outFile;
@@ -55,11 +52,12 @@ public class mEvaluator extends CasConsumer_ImplBase implements CasObjectProcess
     hitnumber = sampleoutnumber = annotnumber = 0;
 
     try {
-      FileReader fr = new FileReader("src/main/resources/data/sample.out");// 创建FileReader对象，用来读取字符流
-      BufferedReader br = new BufferedReader(fr); // 缓冲指定文件的输入
-      String myreadline; // 定义一个String类型的变量,用来每次读取一行
+      //create a FileReader to read from the sample.out
+      FileReader fr = new FileReader("src/main/resources/data/sample.out");
+      BufferedReader br = new BufferedReader(fr); 
+      String myreadline; 
       while (br.ready()) {
-        myreadline = br.readLine();// 读取一行
+        myreadline = br.readLine();
         HSet.add(myreadline);
         sampleoutnumber++;
       }
@@ -127,11 +125,6 @@ public class mEvaluator extends CasConsumer_ImplBase implements CasObjectProcess
       newrecord = new String(annot.getLineindex() + "|" + annot.getBegin() + " " + annot.getEnd()
               + "|" + annot.getMSofa());
       
-      // get the text that is enclosed within the annotation in the CAS
-      // String aText = annot.getLineindex();
-      // aText = aText.replace('\n', ' ');
-      // aText = aText.replace('\r', ' ');
-      // System.out.println( annot.getType().getName() + " "+aText);
       if(!prerecord.equals(newrecord)){
         annotnumber++;
         if (HSet.contains(newrecord)) {

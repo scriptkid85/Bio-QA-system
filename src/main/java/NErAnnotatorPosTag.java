@@ -1,5 +1,6 @@
 /*
- *
+ *  Wittren by Guanyu Wang, andrew ID: guanyuw
+ *  For homework 1 of 11791
  */
 
 import java.util.Iterator;
@@ -9,8 +10,10 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 
 /**
- * Example annotator that detects room numbers using Java 1.4 regular expressions.
+ * The Name Entity Recognizer. It use the PosTagNamedEntityRecognizer first to tokinize all texts,
+ * then adopts the GeneRuler to judge all these tokens are gene mentions or not.
  */
+
 public class NErAnnotatorPosTag extends JCasAnnotator_ImplBase {
   private PosTagNamedEntityRecognizer mPosTagNER;
 
@@ -65,6 +68,7 @@ public class NErAnnotatorPosTag extends JCasAnnotator_ImplBase {
             if (linewoindex.charAt(i) == ' ')
               beforeend++;
 
+          //compute the start and end value
           annotation.setBegin((Integer) pairs.getKey() - beforestart);
           annotation.setEnd((Integer) pairs.getValue() - beforestart - beforeend - 1);
           annotation.setMSofa(word);

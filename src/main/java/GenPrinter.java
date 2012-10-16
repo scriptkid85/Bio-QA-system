@@ -1,5 +1,6 @@
 /*
- *
+ *  Wittren by Guanyu Wang, andrew ID: guanyuw
+ *  For homework 1 of 11791
  */
 
 import java.io.File;
@@ -18,17 +19,11 @@ import org.apache.uima.resource.ResourceProcessException;
 import org.apache.uima.util.ProcessTrace;
 
 /**
- * An example of CAS Consumer. <br>
- * AnnotationPrinter prints to an output file all annotations in the CAS. <br>
- * Parameters needed by the AnnotationPrinter are
- * <ol>
- * <li>"outputFile" : file to which the output files should be written.</li>
- * </ol>
- * <br>
- * These parameters are set in the initialize method to the values specified in the descriptor file. <br>
- * These may also be set by the application by using the setConfigParameterValue methods.
+ * The Collection Reader Class, which outputs all CASs' annotations. At the same time, if there are
+ * CASs which have exactly the same content, then discard the duplicate.
  * 
- * 
+ * @param outputFile
+ *          file to which the output files should be written.
  */
 
 public class GenPrinter extends CasConsumer_ImplBase implements CasObjectProcessor {
@@ -98,12 +93,6 @@ public class GenPrinter extends CasConsumer_ImplBase implements CasObjectProcess
     Iterator annotationIter = jcas.getAnnotationIndex(GenTag.type).iterator();
     while (annotationIter.hasNext()) {
       GenTag annot = (GenTag) annotationIter.next();
-
-      // get the text that is enclosed within the annotation in the CAS
-      // String aText = annot.getLineindex();
-      // aText = aText.replace('\n', ' ');
-      // aText = aText.replace('\r', ' ');
-      // System.out.println( annot.getType().getName() + " "+aText);
 
       newoutput = annot.getLineindex() + "|" + annot.getBegin() + " " + annot.getEnd() + "|"
               + annot.getMSofa() + "\n";
