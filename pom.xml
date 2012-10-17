@@ -111,6 +111,6 @@
   </dependencies>
   <scm>
   	<connection>scm:git:git@github.com:scriptkid85/hw1-guanyuw.git</connection>
-  	<developerConnection>scm:git:git@github.com:scriptkid85/hw0-guanyuw.git</developerConnection>
+  	<developerConnection>scm:git:git@github.com:scriptkid85/hw1-guanyuw.git</developerConnection>
   </scm>
 </project>
