@@ -9,7 +9,7 @@
                 <nameValuePair>
                     <name>InputDirectory</name>
                     <value>
-                        <string>/home/gavin/workspace/11791/hw1-guanyuw/src/main/resources/data/sample.in</string>
+                        <string>hw1.in</string>
                     </value>
                 </nameValuePair>
                 <nameValuePair>
