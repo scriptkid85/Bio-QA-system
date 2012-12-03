@@ -5,6 +5,8 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -20,8 +22,10 @@ import com.aliasi.util.AbstractExternalizable;
  */
 
 public class NErAnnotatorLingPipe extends JCasAnnotator_ImplBase {
-  private File modelFile = new File("src/main/resources/Lingpipe/ne-en-bio-genetag.HmmChunker");
-
+  //private File modelFile = new File("src/main/resources/Lingpipe/ne-en-bio-genetag.HmmChunker");
+  
+  ObjectInputStream ois = null;
+  URL url = this.getClass().getClassLoader().getResource("ne-en-bio-genetag.HmmChunker");
   private Chunker chunker;
 
   /**
@@ -37,7 +41,8 @@ public class NErAnnotatorLingPipe extends JCasAnnotator_ImplBase {
     int firstblank;
     Chunk chunk;
     try {
-      chunker = (Chunker) AbstractExternalizable.readObject(modelFile);
+      //chunker = (Chunker) AbstractExternalizable.readObject(modelFile);
+      chunker = (Chunker)ois.readObject();
     } catch (IOException e) {
       e.printStackTrace();
     } catch (ClassNotFoundException e) {
