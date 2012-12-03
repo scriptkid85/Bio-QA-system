@@ -25,7 +25,7 @@ public class NErAnnotatorLingPipe extends JCasAnnotator_ImplBase {
   //private File modelFile = new File("src/main/resources/Lingpipe/ne-en-bio-genetag.HmmChunker");
   
   ObjectInputStream ois = null;
-  URL url = this.getClass().getClassLoader().getResource("ne-en-bio-genetag.HmmChunker");
+  URL url = this.getClass().getClassLoader().getResource("Lingpipe/ne-en-bio-genetag.HmmChunker");
   private Chunker chunker;
 
   /**

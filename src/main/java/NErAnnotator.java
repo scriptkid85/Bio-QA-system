@@ -4,7 +4,10 @@
  */
 
 import java.io.File;
+import java.io.*;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,11 +29,15 @@ import com.aliasi.util.AbstractExternalizable;
  */
 
 public class NErAnnotator extends JCasAnnotator_ImplBase {
-  private File modelFile = new File("src/main/resources/Lingpipe/ne-en-bio-genetag.HmmChunker");
+  
+  private InputStream ois = null;
+  //URL url = this.getClass().getClassLoader().getResource("Lingpipe/ne-en-bio-genetag.HmmChunker");
+  
+  private Chunker chunker;
+  
+  private File modelFile = new File("Lingpipe/ne-en-bio-genetag.HmmChunker");
 
   private PosTagNamedEntityRecognizer mPosTagNER;
-
-  private Chunker chunker;
 
   private GeneRuler mRuler;
 
@@ -41,6 +48,8 @@ public class NErAnnotator extends JCasAnnotator_ImplBase {
    */
   public void process(JCas aJCas) {
     // get document text
+    ois = this.getClass().getClassLoader().getResourceAsStream("Lingpipe/ne-en-bio-genetag.HmmChunker");
+ //   System.out.println(this.getClass().getClassLoader().getResource("Lingpipe/ne-en-bio-genetag.HmmChunker"));
     String docText = aJCas.getDocumentText();
     String[] lines;
     String word;
